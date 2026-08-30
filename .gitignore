@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode user state
+*.xcuserstate
+xcuserdata/
+**/xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+
+# Build products
+.build/
+build/
+DerivedData/
+*.dSYM
+*.dSYM.zip
+*.ipa
+*.xcarchive
+
+# Signing material
+*.cer
+*.p12
+*.mobileprovision
+*.provisionprofile
+
+# Local configuration
+.env
+.env.*
+*.local.xcconfig

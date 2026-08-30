@@ -1,0 +1,26 @@
+name: Feature request
+description: Propose a focused product improvement.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the focus problem before proposing an interface or implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain how this fits the coffee model and which platform it affects.
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety and platform constraints
+      description: Note any permissions, app-hiding, Screen Time, recovery, or distribution implications.
+    validations:
+      required: true

@@ -1,0 +1,207 @@
+name: BrewFocus
+
+options:
+  bundleIdPrefix: app.brewfocus
+  deploymentTarget:
+    macOS: "14.0"
+    iOS: "17.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    SWIFT_VERSION: "5.0"
+
+targets:
+  BrewFocus:
+    type: application
+    platform: macOS
+    sources:
+      - path: BrewFocus
+        excludes:
+          - Resources/Info.plist
+          - Resources/BrewFocus.entitlements
+      - path: BrewFocusShared
+    info:
+      path: BrewFocus/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: BrewFocus
+        CFBundleShortVersionString: 0.3.0
+        CFBundleVersion: "1"
+        LSUIElement: true
+        NSPrincipalClass: NSApplication
+    entitlements:
+      path: BrewFocus/Resources/BrewFocus.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.brewfocus.mac
+        PRODUCT_NAME: BrewFocus
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_APP_SANDBOX: true
+        ENABLE_HARDENED_RUNTIME: true
+        CODE_SIGN_STYLE: Automatic
+
+  BrewFocusDeviceActivityMonitor:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: BrewFocusDeviceActivityMonitor
+        excludes:
+          - Resources/Info.plist
+          - Resources/BrewFocusDeviceActivityMonitor.entitlements
+      - path: BrewFocusiOSShared
+      - path: BrewFocusShared
+    info:
+      path: BrewFocusDeviceActivityMonitor/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: BrewFocus Session Monitor
+        CFBundleShortVersionString: 0.3.0
+        CFBundleVersion: "1"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.deviceactivity.monitor-extension
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).BrewFocusDeviceActivityMonitorExtension
+    entitlements:
+      path: BrewFocusDeviceActivityMonitor/Resources/BrewFocusDeviceActivityMonitor.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups:
+          - group.app.brewfocus.shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.brewfocus.ios.device-activity-monitor
+        PRODUCT_NAME: BrewFocusDeviceActivityMonitor
+        APPLICATION_EXTENSION_API_ONLY: true
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: 1
+
+  BrewFocusWidgets:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: BrewFocusWidgets
+        excludes:
+          - Resources/Info.plist
+          - Resources/BrewFocusWidgets.entitlements
+      - path: BrewFocusWidgetShared
+      - path: BrewFocusiOSShared
+      - path: BrewFocusShared
+    info:
+      path: BrewFocusWidgets/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: BrewFocus Widgets
+        CFBundleShortVersionString: 0.3.0
+        CFBundleVersion: "1"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: BrewFocusWidgets/Resources/BrewFocusWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.app.brewfocus.shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.brewfocus.ios.widgets
+        PRODUCT_NAME: BrewFocusWidgets
+        APPLICATION_EXTENSION_API_ONLY: true
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: 1
+
+  BrewFocusiOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: BrewFocusiOS
+        excludes:
+          - Resources/Info.plist
+          - Resources/BrewFocusiOS.entitlements
+      - path: BrewFocusiOSShared
+      - path: BrewFocusShared
+      - path: BrewFocusWidgetShared
+    info:
+      path: BrewFocusiOS/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: BrewFocus
+        CFBundleShortVersionString: 0.3.0
+        CFBundleVersion: "1"
+        UILaunchScreen: {}
+        CFBundleURLTypes:
+          - CFBundleURLName: app.brewfocus.ios
+            CFBundleURLSchemes:
+              - brewfocus
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    entitlements:
+      path: BrewFocusiOS/Resources/BrewFocusiOS.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups:
+          - group.app.brewfocus.shared
+    dependencies:
+      - target: BrewFocusDeviceActivityMonitor
+      - target: BrewFocusWidgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.brewfocus.ios
+        PRODUCT_NAME: BrewFocusiOS
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: 1
+        SUPPORTS_MACCATALYST: false
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: false
+
+  BrewFocusiOSTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: BrewFocusiOSTests
+    dependencies:
+      - target: BrewFocusiOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.brewfocus.ios.tests
+        GENERATE_INFOPLIST_FILE: true
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: 1
+
+  BrewFocusTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: BrewFocusTests
+    dependencies:
+      - target: BrewFocus
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.brewfocus.mac.tests
+        GENERATE_INFOPLIST_FILE: true
+        CODE_SIGN_STYLE: Automatic
+
+schemes:
+  BrewFocus:
+    build:
+      targets:
+        BrewFocus: all
+        BrewFocusTests: [test]
+    test:
+      targets:
+        - BrewFocusTests
+
+  BrewFocusiOS:
+    build:
+      targets:
+        BrewFocusiOS: all
+        BrewFocusDeviceActivityMonitor: all
+        BrewFocusWidgets: all
+        BrewFocusiOSTests: [test]
+    run:
+      config: Debug
+      executable: BrewFocusiOS
+    test:
+      targets:
+        - BrewFocusiOSTests

@@ -1,0 +1,51 @@
+name: Bug report
+description: Report reproducible BrewFocus behavior.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve BrewFocus. Do not include sensitive information or security vulnerabilities here.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - macOS
+        - iPhone
+        - Lock Screen widget or Control Center
+        - Build or tests
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: OS and Xcode versions
+      placeholder: macOS 26.5, Xcode 26.5
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the coffee type and whether a session or Morning Quarantine was active.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I have ended the session and confirmed that no app remains hidden and no Screen Time shield remains active.

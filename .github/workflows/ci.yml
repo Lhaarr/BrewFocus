@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macos-tests:
+    name: macOS tests
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Run macOS tests
+        run: |
+          xcodebuild \
+            -project BrewFocus.xcodeproj \
+            -scheme BrewFocus \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/BrewFocusMacTests" \
+            CODE_SIGNING_ALLOWED=NO \
+            test
+
+  ios-build:
+    name: iOS build
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Compile iPhone app and extensions
+        run: |
+          xcodebuild \
+            -project BrewFocus.xcodeproj \
+            -scheme BrewFocusiOS \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/BrewFocusiOSBuild" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+  ios-tests:
+    name: iOS tests
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Run iOS tests
+        run: |
+          xcodebuild \
+            -project BrewFocus.xcodeproj \
+            -scheme BrewFocusiOS \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            -derivedDataPath "$RUNNER_TEMP/BrewFocusiOSTests" \
+            CODE_SIGNING_ALLOWED=NO \
+            test
