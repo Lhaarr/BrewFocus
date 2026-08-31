@@ -18,6 +18,14 @@ Thank you for helping make focus simpler on Apple platforms.
 5. Complete the applicable manual test matrix for behavior that interacts with other apps, Screen Time, widgets, or device restart.
 6. Open a pull request describing the behavior change and verification performed.
 
+## Review and merge
+
+- All changes to `main` go through a pull request.
+- The macOS tests, iOS tests, and generic iOS build must pass before merge.
+- The maintainer reviews product behavior, safety, privacy, and Apple API usage.
+- Contributors should respond to review feedback with focused follow-up commits.
+- Only a maintainer merges pull requests. Please do not request direct write access for a contribution.
+
 ### Automated checks
 
 ```sh

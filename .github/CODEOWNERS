@@ -1,0 +1,7 @@
+# BrewFocus currently has one maintainer. Contributors propose changes through
+# pull requests; the maintainer reviews and merges them after CI passes.
+* @Lhaarr
+
+# Keep ownership of repository policy and automation explicit.
+/.github/ @Lhaarr
+
