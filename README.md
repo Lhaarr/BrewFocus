@@ -4,6 +4,26 @@
 
 BrewFocus is a native, local-first focus tool for macOS and iPhone. Instead of configuring productivity profiles, you choose a coffee. Each coffee represents how much app access you give up for the session.
 
+<p align="center">
+  <img src="assets/screenshots/lock-screen-widget.jpg" alt="BrewFocus coffee widget on the iPhone Lock Screen" width="900">
+</p>
+<p align="center"><sub>Keep the current coffee within sight, without opening the app.</sub></p>
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="assets/screenshots/coffee-menu.jpg" alt="BrewFocus coffee selection on iPhone">
+    </td>
+    <td width="50%">
+      <img src="assets/screenshots/coffee-rhythm.jpg" alt="BrewFocus Coffee Rhythm activity history">
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Choose how much freedom the session allows.</sub></td>
+    <td align="center"><sub>Build a quiet record of completed focus sessions.</sub></td>
+  </tr>
+</table>
+
 > BrewFocus is pre-release software. The session lifecycle is covered by automated tests, but the complete physical-device and manual restriction matrices are still in progress.
 
 ## Coffee contracts
