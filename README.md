@@ -62,6 +62,16 @@ The Mac restriction engine hides apps cooperatively through documented AppKit be
 
 Physical Screen Time enforcement and distribution signing require Apple capabilities that are not available to unsigned CI builds. See [the iPhone test guide](docs/iphone-spike.md).
 
+## Focus Tag prototype
+
+Pair a physical NFC tag and choose distracting iPhone apps once. Start Focus from BrewFocus wherever you are, then scan the tag directly from the home card to unlock. The tag also toggles blocking on when inactive. The home card shows elapsed time, completed quarter-hour milestones and blocked-app count, with Cup Shelf visible below it. Coffee choices and setup have separate destinations. Sessions have no automatic finish time, and a confirmed emergency unlock remains available in Focus Settings. A two-part printable case is provided for a 20 mm NTAG213 sticker and Bambu Lab A1.
+
+For easier daily use, opt into **Allow Shortcut Control** and create a personal NFC automation using **Toggle Focus Tag**. It toggles without a second in-app scan, but can also be run without the physical tag. Every recipient needs BrewFocus, Screen Time permission and their own automation; the tag is not a standalone blocker.
+
+Long tag sessions display days and weeks as well as hours, minutes and seconds. **Longest block** keeps a local personal best for the longest uninterrupted tag session, with an active session eligible to set a new record.
+
+The prototype builds and has automated state tests; NFC, Screen Time behavior, and case fit still need physical verification. See [setup and limits](docs/focus-tag.md) and [print files](hardware/focus-tag/README.md).
+
 ## Privacy
 
 BrewFocus stores session data locally. The current codebase has no account system, cloud backend, analytics, advertising SDK, or required network service.
@@ -145,6 +155,7 @@ docs/                            product and technical documentation
 - [macOS manual test matrix](docs/manual-test-matrix.md)
 - [iPhone and physical-device guide](docs/iphone-spike.md)
 - [Roadmap](docs/roadmap.md)
+- [Focus Tag setup and physical testing](docs/focus-tag.md)
 - [Contributing](CONTRIBUTING.md)
 
 ## Contributing

@@ -10,12 +10,16 @@
 		0F20096B83036255F768C15A /* ViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48439CD435030089D7E71E2 /* ViewComponents.swift */; };
 		12F1F5B82E7B23FEB35E2105 /* BrewFocusDeviceActivityMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = ABE728249E4AFDD6271256D2 /* BrewFocusDeviceActivityMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		15169616ED3A7EF415DA4824 /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314FB4DD9E048ECAA0EC189B /* FocusSession.swift */; };
+		1AC752949768D9CB393767C3 /* FocusTagManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2314C6D5B249E109C2CC4FC2 /* FocusTagManager.swift */; };
 		1BF81C11913C1A701B60D06E /* CoffeeHeatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4085BD39E9C7E7712897DEB8 /* CoffeeHeatmap.swift */; };
 		24370E201FF9925A6ACE6128 /* ApplicationRestrictionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636574C9181B8074D26CBEB0 /* ApplicationRestrictionTests.swift */; };
+		26DD35AB1420BDFA5DDA06EA /* FocusTagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6766363672C611D34E02BEA9 /* FocusTagTests.swift */; };
+		2A1A830E6123BA9EC25E1554 /* FocusTagStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC5D4016A94847814E3B6CA /* FocusTagStore.swift */; };
 		2C44437747DD95B034B82C3E /* CoffeeKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454F1A17A895DF27CB7DBE43 /* CoffeeKind.swift */; };
 		3B8A1BCE5513946DB4B39669 /* IPhoneFocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CAC2CCD6D1158AEC77EA3B /* IPhoneFocusManager.swift */; };
 		4090953DD05FBFA47C589F46 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CE2FEC8FD30330DA0662490 /* Assets.xcassets */; };
 		4C19E524A6DC91C363FE8AB6 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024DF374CABC36F6333A2BC /* SessionStore.swift */; };
+		52D674C99E950B5E647A2D64 /* FocusTagReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3717A2B19FBF7B1F0783784 /* FocusTagReader.swift */; };
 		5A987AC2E3C75B54CC2B4385 /* CupShelfView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B48E9242C18BB15AA6F7A2 /* CupShelfView.swift */; };
 		5B787A31E6D134C8BF266876 /* BrewFocusiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C0CC1DDEBF66DF0BC3CC96 /* BrewFocusiOSApp.swift */; };
 		61E01F58E70A5F241622736A /* CoffeeHeatmapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE0A1F5080981F658195693 /* CoffeeHeatmapTests.swift */; };
@@ -24,10 +28,13 @@
 		645BDE960D6F370A52FA207B /* MenuBarRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12FE60D2729CFEF48D80C07 /* MenuBarRootView.swift */; };
 		64E23A4587CBA10AA23F593B /* FocusRestriction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA0B453AFFC88EEBC1C8489 /* FocusRestriction.swift */; };
 		70DB6690003BB7FC903BA215 /* CoffeeKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454F1A17A895DF27CB7DBE43 /* CoffeeKind.swift */; };
+		715C9A39F490F3157ACE6F93 /* OpenFocusTagIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B486C97EFF649748B23879DA /* OpenFocusTagIntent.swift */; };
 		7FB06F8836A0EED04156CDFB /* ScreenTimeShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C0F468127F32DB1B271EDD /* ScreenTimeShared.swift */; };
 		857AE2E089C60752E1521B5F /* ApplicationCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53E91BD04EB952A52C4FEDB /* ApplicationCatalog.swift */; };
 		85A906635002B61CFF1DC913 /* CoffeeHeatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4085BD39E9C7E7712897DEB8 /* CoffeeHeatmap.swift */; };
 		892630E7E3BC57C5FF18B7B7 /* CoffeeOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60D976152A5B49598BCCEA4 /* CoffeeOrderView.swift */; };
+		8B74A49D02BED94172CA8B82 /* FocusTagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B25B84EDC8802DBB48582B73 /* FocusTagView.swift */; };
+		93FB2A5F3C80618FCE96387F /* FocusTagState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA21C9E03903B132DB6913D9 /* FocusTagState.swift */; };
 		964907C7045B30060B75E103 /* CoffeeHeatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4085BD39E9C7E7712897DEB8 /* CoffeeHeatmap.swift */; };
 		973B7584BD0F1CC44D08E7B9 /* ScreenTimeShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C0F468127F32DB1B271EDD /* ScreenTimeShared.swift */; };
 		9C85BFF2EB0C8440EBFF4D9D /* BrewFocusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0BD01C24596BFE2D70ABE52 /* BrewFocusApp.swift */; };
@@ -102,15 +109,17 @@
 /* Begin PBXFileReference section */
 		04511D36E57AB0A85713B6B2 /* BrewFocusiOSTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BrewFocusiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CE2FEC8FD30330DA0662490 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		13DBA497928A76F75D65D41D /* BrewFocusWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BrewFocusWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		15E6F84319BC6899211E4000 /* BrewFocusiOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BrewFocusiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13DBA497928A76F75D65D41D /* BrewFocusWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BrewFocusWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		15E6F84319BC6899211E4000 /* BrewFocusiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrewFocusiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CE0A1F5080981F658195693 /* CoffeeHeatmapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeHeatmapTests.swift; sourceTree = "<group>"; };
 		1D9713EA6A819CAF5C7B7499 /* AllowedApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllowedApplication.swift; sourceTree = "<group>"; };
+		2314C6D5B249E109C2CC4FC2 /* FocusTagManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTagManager.swift; sourceTree = "<group>"; };
 		235386A61529E54F17E53CB8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		28C0CC1DDEBF66DF0BC3CC96 /* BrewFocusiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewFocusiOSApp.swift; sourceTree = "<group>"; };
 		2E1CBD97414FEB84CA501EB1 /* BrewFocusDeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewFocusDeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
 		314FB4DD9E048ECAA0EC189B /* FocusSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSession.swift; sourceTree = "<group>"; };
 		353AE6D0B2BE6CD5F3579D9A /* SessionManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerTests.swift; sourceTree = "<group>"; };
+		3FC5D4016A94847814E3B6CA /* FocusTagStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTagStore.swift; sourceTree = "<group>"; };
 		4085BD39E9C7E7712897DEB8 /* CoffeeHeatmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeHeatmap.swift; sourceTree = "<group>"; };
 		454F1A17A895DF27CB7DBE43 /* CoffeeKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeKind.swift; sourceTree = "<group>"; };
 		4C9E4734131251134242FAC4 /* BrewFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrewFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +127,7 @@
 		60132618BD882086E42A6F57 /* MorningQuarantineIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorningQuarantineIntent.swift; sourceTree = "<group>"; };
 		636574C9181B8074D26CBEB0 /* ApplicationRestrictionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationRestrictionTests.swift; sourceTree = "<group>"; };
 		66C0F468127F32DB1B271EDD /* ScreenTimeShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeShared.swift; sourceTree = "<group>"; };
+		6766363672C611D34E02BEA9 /* FocusTagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTagTests.swift; sourceTree = "<group>"; };
 		6D27FCA1C13BD400D1FB8725 /* BrewFocusWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewFocusWidgets.swift; sourceTree = "<group>"; };
 		70E77099BE57F08B124C75F3 /* BrewFocusStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewFocusStyle.swift; sourceTree = "<group>"; };
 		75CAC2CCD6D1158AEC77EA3B /* IPhoneFocusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPhoneFocusManager.swift; sourceTree = "<group>"; };
@@ -129,14 +139,18 @@
 		97C56DC16913DEA0B13B5C96 /* CoffeeMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeMenuView.swift; sourceTree = "<group>"; };
 		98B48E9242C18BB15AA6F7A2 /* CupShelfView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CupShelfView.swift; sourceTree = "<group>"; };
 		A48439CD435030089D7E71E2 /* ViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewComponents.swift; sourceTree = "<group>"; };
-		ABE728249E4AFDD6271256D2 /* BrewFocusDeviceActivityMonitor.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BrewFocusDeviceActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		ABE728249E4AFDD6271256D2 /* BrewFocusDeviceActivityMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BrewFocusDeviceActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B25B84EDC8802DBB48582B73 /* FocusTagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTagView.swift; sourceTree = "<group>"; };
+		B486C97EFF649748B23879DA /* OpenFocusTagIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFocusTagIntent.swift; sourceTree = "<group>"; };
 		B94F968749A4089E08EBACB7 /* StartQuickCoffeeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartQuickCoffeeIntent.swift; sourceTree = "<group>"; };
 		C0BD01C24596BFE2D70ABE52 /* BrewFocusApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewFocusApp.swift; sourceTree = "<group>"; };
+		C3717A2B19FBF7B1F0783784 /* FocusTagReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTagReader.swift; sourceTree = "<group>"; };
 		D7A7C8BBDAB039315720C95D /* BlockNoticePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockNoticePresenter.swift; sourceTree = "<group>"; };
 		D9EDC52341ED43CF0BA2BCBF /* FocusSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSessionView.swift; sourceTree = "<group>"; };
 		E01D6D4B53896F0939AA6D2F /* BrewFocusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BrewFocusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E53E91BD04EB952A52C4FEDB /* ApplicationCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCatalog.swift; sourceTree = "<group>"; };
 		E60D976152A5B49598BCCEA4 /* CoffeeOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeOrderView.swift; sourceTree = "<group>"; };
+		EA21C9E03903B132DB6913D9 /* FocusTagState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTagState.swift; sourceTree = "<group>"; };
 		F12FE60D2729CFEF48D80C07 /* MenuBarRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarRootView.swift; sourceTree = "<group>"; };
 		FD491F5FFD6A0D00506CEC4D /* IPhoneFocusSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPhoneFocusSessionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -229,6 +243,7 @@
 			isa = PBXGroup;
 			children = (
 				5E1A676F54F1A2E65172CDE1 /* App */,
+				9E698C52F930B057CDA8956B /* FocusTag */,
 				218A9CB576E99C88184FA7B7 /* Resources */,
 				CCE1BBBBA0EFD183D9F3A771 /* Views */,
 			);
@@ -248,6 +263,7 @@
 		60CE3F98844FE103DD0AF799 /* BrewFocusiOSTests */ = {
 			isa = PBXGroup;
 			children = (
+				6766363672C611D34E02BEA9 /* FocusTagTests.swift */,
 				FD491F5FFD6A0D00506CEC4D /* IPhoneFocusSessionTests.swift */,
 			);
 			path = BrewFocusiOSTests;
@@ -293,6 +309,19 @@
 				3A19CCF94A62B36638E7E840 /* Features */,
 			);
 			path = BrewFocusShared;
+			sourceTree = "<group>";
+		};
+		9E698C52F930B057CDA8956B /* FocusTag */ = {
+			isa = PBXGroup;
+			children = (
+				2314C6D5B249E109C2CC4FC2 /* FocusTagManager.swift */,
+				C3717A2B19FBF7B1F0783784 /* FocusTagReader.swift */,
+				EA21C9E03903B132DB6913D9 /* FocusTagState.swift */,
+				3FC5D4016A94847814E3B6CA /* FocusTagStore.swift */,
+				B25B84EDC8802DBB48582B73 /* FocusTagView.swift */,
+				B486C97EFF649748B23879DA /* OpenFocusTagIntent.swift */,
+			);
+			path = FocusTag;
 			sourceTree = "<group>";
 		};
 		A29BD9658FCD4281552DF7BA /* Order */ = {
@@ -587,6 +616,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26DD35AB1420BDFA5DDA06EA /* FocusTagTests.swift in Sources */,
 				E9F0B7DB9ACB945564D8981F /* IPhoneFocusSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -598,9 +628,15 @@
 				5B787A31E6D134C8BF266876 /* BrewFocusiOSApp.swift in Sources */,
 				61F147CB61DAD27FC8CB4ADC /* CoffeeHeatmap.swift in Sources */,
 				70DB6690003BB7FC903BA215 /* CoffeeKind.swift in Sources */,
+				1AC752949768D9CB393767C3 /* FocusTagManager.swift in Sources */,
+				52D674C99E950B5E647A2D64 /* FocusTagReader.swift in Sources */,
+				93FB2A5F3C80618FCE96387F /* FocusTagState.swift in Sources */,
+				2A1A830E6123BA9EC25E1554 /* FocusTagStore.swift in Sources */,
+				8B74A49D02BED94172CA8B82 /* FocusTagView.swift in Sources */,
 				3B8A1BCE5513946DB4B39669 /* IPhoneFocusManager.swift in Sources */,
 				E16F802AF7793B1993E79295 /* IPhoneRootView.swift in Sources */,
 				F6982B503A06F10FBE30A2FB /* MorningQuarantineIntent.swift in Sources */,
+				715C9A39F490F3157ACE6F93 /* OpenFocusTagIntent.swift in Sources */,
 				973B7584BD0F1CC44D08E7B9 /* ScreenTimeShared.swift in Sources */,
 				637869DCB237565ABD9AA870 /* StartQuickCoffeeIntent.swift in Sources */,
 			);
