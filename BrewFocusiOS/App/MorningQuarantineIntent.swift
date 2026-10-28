@@ -42,6 +42,18 @@ struct StartMorningQuarantineIntent: AppIntent {
 struct BrewFocusAppShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
+            intent: ToggleFocusTagIntent(),
+            phrases: ["Toggle Focus Tag in \(.applicationName)"],
+            shortTitle: "Toggle Focus Tag",
+            systemImageName: "power"
+        )
+        AppShortcut(
+            intent: OpenFocusTagIntent(),
+            phrases: ["Open Focus Tag in \(.applicationName)"],
+            shortTitle: "Focus Tag",
+            systemImageName: "wave.3.right"
+        )
+        AppShortcut(
             intent: StartQuickCoffeeIntent(),
             phrases: [
                 "Start Quick Coffee with \(.applicationName)",

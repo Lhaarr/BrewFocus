@@ -1,0 +1,34 @@
+{
+  "units": "mm",
+  "printer": "Bambu Lab A1 / 0.4 mm nozzle",
+  "tag_diameter_mm": 20,
+  "tag_pocket_diameter_mm": 21.0,
+  "radial_clearance_mm": 0.15,
+  "assembled_dimensions_mm": [
+    34,
+    34,
+    6
+  ],
+  "plastic_above_tag_mm": 1.2,
+  "minimum_plastic_under_engraving_mm": 0.8,
+  "base": {
+    "dimensions_mm": [
+      34.0,
+      34.0,
+      4.8
+    ],
+    "volume_mm3": 2411.29,
+    "non_manifold_edges": 0
+  },
+  "lid": {
+    "dimensions_mm": [
+      34.0,
+      34.0,
+      3.6
+    ],
+    "volume_mm3": 1466.11,
+    "non_manifold_edges": 0
+  },
+  "physical_fit_verified": false,
+  "nfc_read_range_verified": false
+}

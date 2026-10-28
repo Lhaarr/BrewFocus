@@ -15,7 +15,8 @@ Before running a fork on a physical iPhone:
 5. Select your development team for `BrewFocusiOS`, `BrewFocusDeviceActivityMonitor`, and `BrewFocusWidgets`.
 6. Enable Family Controls for the app and Device Activity Monitor identifiers.
 7. Enable the App Group for all three identifiers.
-8. Build the `BrewFocusiOS` scheme on the physical device.
+8. Enable Near Field Communication Tag Reading for the main `BrewFocusiOS` identifier and refresh its provisioning profile. Focus Tag uses `NFCTagReaderSession` (`TAG` format); no NFC capability is needed on the extensions.
+9. Build the `BrewFocusiOS` scheme on the physical device.
 
 Do not commit personal team identifiers, provisioning profiles, certificates, or Xcode user data.
 

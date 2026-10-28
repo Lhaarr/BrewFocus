@@ -8,6 +8,11 @@ struct IPhoneRootView: View {
     @Environment(\.openURL) private var openURL
     @State private var isActivityPickerPresented = false
     @State private var isMorningPickerPresented = false
+    @StateObject private var focusTag = FocusTagManager.shared
+    @State private var isFocusTagPresented = false
+    @StateObject private var tagReader = FocusTagReader()
+
+    private enum Destination: Hashable { case coffee, shelf, morning, help }
 
     var body: some View {
         NavigationStack {
@@ -17,14 +22,23 @@ struct IPhoneRootView: View {
                         completionBanner(completionMessage)
                     }
 
-                    if manager.isMorningQuarantineActive {
-                        morningQuarantineActive
-                    }
-
-                    if manager.session != nil {
-                        activeSession
-                    } else if manager.isAuthorized {
-                        authorizedHome
+                    if manager.isAuthorized || focusTag.configuration.state.isActive {
+                        if let duration = focusTag.lastCompletedDuration {
+                            tagCompletion(duration)
+                        }
+                        if focusTag.configuration.state.isActive {
+                            focusTagCard
+                            if manager.session != nil || manager.isMorningQuarantineActive { otherSessions }
+                        } else if manager.session != nil || manager.isMorningQuarantineActive {
+                            if manager.session != nil { activeSession }
+                            if manager.isMorningQuarantineActive { morningQuarantineActive }
+                        } else {
+                            focusTagCard
+                        }
+                        FocusLongestBlockCard(startedAt: focusTag.configuration.state.startedAt,
+                                              savedRecord: focusTag.configuration.longestBlockingDuration)
+                        homeCupShelf
+                        homeDestinations
                     } else {
                         authorizationIntroduction
                     }
@@ -34,7 +48,47 @@ struct IPhoneRootView: View {
             }
             .background(Color(uiColor: .systemGroupedBackground))
             .navigationTitle("BrewFocus")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { isFocusTagPresented = true } label: {
+                        Image(systemName: "gearshape")
+                            .frame(minWidth: 44, minHeight: 44)
+                    }
+                    .accessibilityLabel("Focus settings")
+                    .disabled(tagReader.isScanning)
+                }
+            }
+            .navigationDestination(isPresented: $isFocusTagPresented) {
+                FocusTagView(manager: focusTag)
+            }
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case .coffee:
+                    destinationPage("Coffee Menu") {
+                        if focusTag.configuration.state.isActive { overlappingSessionNotice }
+                        if manager.session != nil { activeSession }
+                        else { coffeeOrder }
+                    }
+                case .shelf:
+                    destinationPage("Cup Shelf") {
+                        coffeeRhythm
+                        Text("Your completed coffees. Tag sessions are shown live on the focus screen and are not included here yet.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                case .morning:
+                    destinationPage("Morning Quarantine") {
+                        if focusTag.configuration.state.isActive { overlappingSessionNotice }
+                        if manager.isMorningQuarantineActive { morningQuarantineActive }
+                        morningQuarantineOrder
+                    }
+                case .help:
+                    destinationPage("Help") {
+                        tagHelp
+                        lockScreenWidgetGuide
+                    }
+                }
+            }
         }
         .tint(.primary)
         .familyActivityPicker(
@@ -46,7 +100,11 @@ struct IPhoneRootView: View {
             selection: $manager.morningSelection
         )
         .onOpenURL { url in
-            manager.handle(url)
+            if url.scheme == "brewfocus", url.host == "focus-tag" {
+                isFocusTagPresented = true
+            } else {
+                manager.handle(url)
+            }
         }
         .onChange(of: isMorningPickerPresented) { wasPresented, isPresented in
             if wasPresented && !isPresented {
@@ -55,38 +113,182 @@ struct IPhoneRootView: View {
         }
         .task {
             manager.bootstrap()
+            focusTag.refresh(isAuthorized: manager.isAuthorized)
         }
+        .onChange(of: focusTag.isAuthorized) { _, _ in manager.refreshAfterBecomingActive() }
+        .onChange(of: manager.isAuthorized) { _, authorized in focusTag.refresh(isAuthorized: authorized) }
+        .onChange(of: isFocusTagPresented) { _, presented in if presented { tagReader.cancel() } }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 manager.refreshAfterBecomingActive()
+                focusTag.refresh(isAuthorized: manager.isAuthorized)
             }
         }
         .alert(
             "BrewFocus couldn’t continue",
             isPresented: Binding(
-                get: { manager.lastError != nil },
+                get: { manager.lastError != nil || tagReader.errorMessage != nil
+                    || (!isFocusTagPresented && focusTag.errorMessage != nil) },
                 set: { isPresented in
                     if !isPresented {
                         manager.clearError()
+                        focusTag.errorMessage = nil
+                        tagReader.errorMessage = nil
                     }
                 }
             )
         ) {
             Button("OK", role: .cancel) {
                 manager.clearError()
+                focusTag.errorMessage = nil
+                tagReader.errorMessage = nil
             }
         } message: {
-            Text(manager.lastError ?? "Unknown error")
+            Text(manager.lastError ?? tagReader.errorMessage ?? focusTag.errorMessage ?? "Unknown error")
         }
     }
 
-    private var authorizedHome: some View {
-        VStack(spacing: 30) {
-            coffeeRhythm
-            coffeeOrder
-            lockScreenWidgetGuide
+    private var focusTagCard: some View {
+        FocusTagHomeCard(
+            startedAt: focusTag.configuration.state.startedAt,
+            applicationCount: focusTag.configuration.selection.applicationTokens.count,
+            isReady: focusTag.isAuthorized && focusTag.configuration.state.isPaired && focusTag.configuration.isSelectionValid,
+            isScanning: tagReader.isScanning,
+            shortcutControlEnabled: focusTag.configuration.shortcutControlEnabled,
+            onStart: {
+                do {
+                    try focusTag.start(isAuthorized: AuthorizationCenter.shared.authorizationStatus == .approved)
+                } catch { focusTag.errorMessage = error.localizedDescription }
+            },
+            onScan: {
+                tagReader.scan(message: "Scan your paired tag to unlock your apps.") { identifier in
+                    try focusTag.unlock(scannedIdentifier: identifier)
+                    return "Tag session ended. Other active sessions may still block apps."
+                }
+            },
+            onSetup: { isFocusTagPresented = true }
+        )
+    }
+
+    private var homeDestinations: some View {
+        VStack(spacing: 0) {
+            if !focusTag.configuration.state.isActive {
+                NavigationLink(value: Destination.coffee) {
+                    homeRow("Timed coffee", subtitle: "Choose a coffee and a finish time", symbol: "cup.and.saucer")
+                }
+                Divider()
+            }
+            if !focusTag.configuration.state.isActive {
+                NavigationLink(value: Destination.morning) {
+                    homeRow("Morning Quarantine", subtitle: "One protected hour, every day", symbol: "sunrise")
+                }
+            }
             Divider()
-            morningQuarantineOrder
+            NavigationLink(value: Destination.help) {
+                homeRow("Help", subtitle: "Using your tag and Shortcuts", symbol: "questionmark.circle")
+            }
+        }
+        .buttonStyle(.plain)
+        .disabled(tagReader.isScanning)
+    }
+
+    private var homeCupShelf: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Label("Cup Shelf", systemImage: "square.grid.2x2")
+                    .font(.headline)
+                Spacer()
+                NavigationLink("View all", value: Destination.shelf)
+                    .font(.subheadline)
+                    .frame(minHeight: 44)
+                    .disabled(tagReader.isScanning)
+            }
+            CoffeeHeatmapView(records: manager.coffeeHistory, referenceDate: manager.currentDate)
+        }
+        .padding(18)
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
+    }
+
+    private func homeRow(_ title: String, subtitle: String, symbol: String) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: symbol).frame(width: 24)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(.headline)
+                Text(subtitle).font(.subheadline).foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 8)
+            Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 16)
+        .frame(minHeight: 44)
+        .contentShape(Rectangle())
+    }
+
+    private func destinationPage<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24, content: content)
+                .padding(20)
+        }
+        .background(Color(uiColor: .systemGroupedBackground))
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var otherSessions: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("ALSO RUNNING").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+            if let session = manager.session {
+                NavigationLink(value: Destination.coffee) {
+                    homeRow(session.coffee.name, subtitle: "\(manager.remainingText) remaining", symbol: "cup.and.saucer.fill")
+                }
+            }
+            if manager.isMorningQuarantineActive {
+                NavigationLink(value: Destination.morning) {
+                    homeRow("Morning Quarantine", subtitle: "\(manager.morningRemainingText) remaining", symbol: "sunrise.fill")
+                }
+            }
+            Text("Each session has its own restrictions. Unlocking your tag does not end these sessions.")
+                .font(.footnote).foregroundStyle(.secondary)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var overlappingSessionNotice: some View {
+        Label("Focus Tag is also active. Ending this session will not unlock your tag's restrictions.", systemImage: "lock.fill")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+    }
+
+    private func tagCompletion(_ duration: TimeInterval) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Focus session ended").font(.headline)
+                Spacer()
+                Button { focusTag.clearCompletion() } label: {
+                    Image(systemName: "xmark").frame(width: 44, height: 44)
+                }
+                .accessibilityLabel("Dismiss completed session")
+            }
+            Text(FocusTagDuration.compact(duration))
+                .font(.title2.monospacedDigit())
+            Text(manager.session != nil || manager.isMorningQuarantineActive
+                 ? "Your other sessions are still running. Their restrictions may still apply."
+                 : "Your tag's restrictions have been removed.")
+                .font(.subheadline).foregroundStyle(.secondary)
+        }
+        .padding(18)
+        .background(.background, in: RoundedRectangle(cornerRadius: 18))
+    }
+
+    private var tagHelp: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Using your tag").font(.title2.weight(.semibold))
+            Text("Start Focus in BrewFocus from anywhere. To finish, choose Scan tag to unlock and hold the top of your iPhone near your paired tag.")
+            Text("To tap without opening the app, allow Shortcut Control in Focus settings and create an NFC automation using Toggle Focus Tag. The Shortcuts action can also be run manually without a tag.")
+            Text("Giving someone a tag? They need BrewFocus, Screen Time permission, their own app choices and their own NFC automation.")
+            Text("Lost your tag? Open Focus settings for Emergency unlock. Other coffee and morning sessions have separate controls.")
+            Button("Open Focus Settings") { isFocusTagPresented = true }
+                .frame(minHeight: 44)
         }
     }
 
@@ -122,7 +324,7 @@ struct IPhoneRootView: View {
                 permissionPoint(
                     symbol: "arrow.uturn.backward.circle.fill",
                     title: "Always reversible",
-                    detail: "Ending a coffee removes every shield BrewFocus applied."
+                    detail: "End each session to remove its restrictions. Focus Tag also has an emergency unlock."
                 )
             }
             .padding(18)
@@ -685,5 +887,232 @@ struct IPhoneRootView: View {
         components.minute = schedule.minute
         let date = Calendar.current.date(from: components) ?? manager.morningStartTime
         return date.formatted(date: .omitted, time: .shortened)
+    }
+}
+
+/// The daily task: start without a scan, or scan to finish an active session.
+struct FocusTagHomeCard: View {
+    let startedAt: Date?
+    let applicationCount: Int
+    let isReady: Bool
+    let isScanning: Bool
+    let shortcutControlEnabled: Bool
+    let onStart: () -> Void
+    let onScan: () -> Void
+    let onSetup: () -> Void
+    var isScanAvailable = FocusTagReader.isAvailable
+
+    @ScaledMetric(relativeTo: .largeTitle) private var timerSize = 56
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            if let startedAt {
+                HStack(spacing: 14) {
+                    Image(systemName: "cup.and.saucer.fill")
+                        .font(.title2)
+                        .frame(width: 48, height: 48)
+                        .background(.primary.opacity(0.06), in: Circle())
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Focus is on").font(.headline)
+                        Text(blockedAppsLabel).font(.subheadline).foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 0)
+                    Image(systemName: "lock.fill")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
+                }
+                VStack(spacing: 12) {
+                    Text("TIME IN FOCUS")
+                        .font(.caption.weight(.semibold))
+                        .tracking(1.2)
+                        .foregroundStyle(.secondary)
+                    FocusElapsedClock(startedAt: startedAt, fontSize: timerSize)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                FocusSessionTimeline(startedAt: startedAt)
+                VStack(alignment: .leading, spacing: 12) {
+                    Button(action: onScan) {
+                        Label {
+                            Text(isScanning ? "Scanning…" : "Scan tag to unlock")
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
+                        } icon: {
+                            Image(systemName: "wave.3.right")
+                        }
+                            .font(.headline)
+                            .foregroundStyle(Color(uiColor: .systemBackground))
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .disabled(isScanning || !isScanAvailable)
+                    .accessibilityHint("Opens the scanner. Your paired tag is needed to remove this session's restrictions.")
+                    Text(shortcutControlEnabled
+                         ? "You can also tap your tag directly if you have set up its Shortcuts automation."
+                         : "Tap Scan, then hold the top of your iPhone near your tag.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            } else if isReady {
+                Image(systemName: "cup.and.saucer")
+                    .font(.title)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Ready to focus").font(.title.weight(.semibold))
+                    Text("Start anywhere. Unlock with your tag.")
+                        .font(.body).foregroundStyle(.secondary)
+                    Text(applicationCount == 1 ? "1 app will be blocked" : "\(applicationCount) apps will be blocked")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                }
+                Button(action: onStart) {
+                    Label {
+                        Text("Start Focus")
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                    } icon: {
+                        Image(systemName: "lock.fill")
+                    }
+                        .font(.headline)
+                        .foregroundStyle(Color(uiColor: .systemBackground))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(isScanning)
+                .accessibilityHint("Starts blocking your selected apps without scanning your tag")
+            } else {
+                Image(systemName: "cup.and.saucer")
+                    .font(.title)
+                    .accessibilityHidden(true)
+                Text("Make room for focus").font(.title.weight(.semibold))
+                Text("Choose the apps you want to put away and pair your tag. Then start focus from anywhere.")
+                    .foregroundStyle(.secondary)
+                Button(action: onSetup) {
+                    Text("Set Up Focus")
+                        .font(.headline)
+                        .foregroundStyle(Color(uiColor: .systemBackground))
+                        .frame(maxWidth: .infinity)
+                }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+            }
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .tint(.primary)
+        .padding(24)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
+    }
+
+    private var blockedAppsLabel: String {
+        applicationCount == 1 ? "1 app blocked" : "\(applicationCount) apps blocked"
+    }
+}
+
+/// An open-ended record of elapsed quarter-hours, with no target or countdown.
+private struct FocusSessionTimeline: View {
+    let startedAt: Date
+
+    var body: some View {
+        TimelineView(.periodic(from: startedAt, by: 60)) { context in
+            let elapsed = max(0, context.date.timeIntervalSince(startedAt))
+            let step: TimeInterval = elapsed >= 604800 ? 604800 : elapsed >= 86400 ? 86400 : elapsed >= 3600 ? 3600 : 900
+            let completed = Int(elapsed / step)
+            let marks = completed > 0 ? Array(max(1, completed - 1)...completed) : []
+            let startLabel = elapsed >= 86400
+                ? startedAt.formatted(.dateTime.day().month(.abbreviated))
+                : startedAt.formatted(date: .omitted, time: .shortened)
+            let labels = [startLabel] + marks.map { FocusTagDuration.compact(Double($0) * step) } + ["Now"]
+            VStack(spacing: 10) {
+                HStack(spacing: 0) {
+                    ForEach(labels.indices, id: \.self) { index in
+                        Circle()
+                            .fill(index == labels.count - 1 ? Color.primary : Color.secondary)
+                            .frame(width: 7, height: 7)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .background {
+                    GeometryReader { geometry in
+                        Rectangle()
+                            .fill(.secondary.opacity(0.25))
+                            .frame(width: geometry.size.width * CGFloat(labels.count - 1) / CGFloat(labels.count), height: 1)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+                .accessibilityHidden(true)
+                HStack(alignment: .top, spacing: 0) {
+                    ForEach(labels.indices, id: \.self) { index in
+                        Text(labels[index])
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(index == labels.count - 1 ? .primary : .secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Session timeline. Started \(startedAt.formatted(date: .abbreviated, time: .shortened)). \(marks.map { FocusTagDuration.compact(Double($0) * step) }.joined(separator: ", ")). Now.")
+        }
+    }
+}
+
+private struct FocusElapsedClock: View {
+    let startedAt: Date
+    let fontSize: CGFloat
+
+    var body: some View {
+        TimelineView(.periodic(from: startedAt, by: 1)) { context in
+            let days = max(0, Int(context.date.timeIntervalSince(startedAt) / 86400))
+            let dayStart = startedAt.addingTimeInterval(Double(days) * 86400)
+            VStack(spacing: 8) {
+                if days > 0 {
+                    Text(days >= 7 ? "\(days / 7)w \(days % 7)d" : "\(days)d")
+                        .font(.title2.weight(.medium).monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+                Text(dayStart, style: .timer)
+                    .font(.system(size: fontSize, weight: .medium, design: .rounded).monospacedDigit())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .multilineTextAlignment(.center)
+                if days > 0 {
+                    Text("Hours · minutes · seconds")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Elapsed focus time")
+            .accessibilityValue(FocusTagDuration.compact(context.date.timeIntervalSince(startedAt)))
+        }
+    }
+}
+
+private struct FocusLongestBlockCard: View {
+    let startedAt: Date?
+    let savedRecord: TimeInterval
+
+    var body: some View {
+        TimelineView(.periodic(from: startedAt ?? Date(), by: 1)) { context in
+            let current = max(0, startedAt.map { context.date.timeIntervalSince($0) } ?? 0)
+            let record = max(savedRecord, current)
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Longest block", systemImage: "trophy")
+                    .font(.headline)
+                Text(record > 0 ? FocusTagDuration.compact(record) : "No record yet")
+                    .font(.title2.weight(.medium).monospacedDigit())
+                    .contentTransition(.numericText())
+                Text(current > 0 && current >= savedRecord
+                     ? "Personal best · still running" : "Your longest uninterrupted tag session")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(18)
+            .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
+        }
     }
 }
